@@ -36,289 +36,465 @@ def sayHello():
 # 장학금 추가로 받아오기 
 @app.route('/api/recommend', methods=['POST'])
 def recommend():
-    body = request.get_json()
-    print(body)
-    
-    params_df=body['action']['params']
-    print(params_df)
-    
-    job=params_df['job']
-    print(job)
-    print(type(job))
-    location=params_df['loc']
-    print(location)
-    Benefits=params_df['Benefits']
-    age=json.loads(params_df['sys_number'])['amount']
-    yes_no = params_df['yes_no']
+    try:
+        body = request.get_json()
+        print(body)
+        
+        params_df=body['action']['params']
+        print(params_df)
+        
+        job=params_df['job']
+        print(job)
+        print(type(job))
+        location=params_df['loc']
+        print(location)
+        Benefits=params_df['Benefits']
+        age=json.loads(params_df['sys_number'])['amount']
+        yes_no = params_df['yes_no']
 
-    Benefits1="\'%%" + Benefits + "%%\'"
-    job1="\'%%" + job + "%%\'"
-    yes_no1 = "\'%%" + yes_no + "%%\'"
-    location1 = "\'%%" + location + "%%\'"
-    df=start.db_select(Benefits1,job1,age,location1,yes_no1)
-    print(df)
-    name=df['name']
-    URL=df['url']
-    if len(df) > 5:
+        Benefits1="\'%%" + Benefits + "%%\'"
+        job1="\'%%" + job + "%%\'"
+        yes_no1 = "\'%%" + yes_no + "%%\'"
+        location1 = "\'%%" + location + "%%\'"
+        df=start.db_select(Benefits1,job1,age,location1,yes_no1)
+        print(df)
+        name=df['name']
+        URL=df['url']
+    except:
         responseBody = {
             "version": "2.0",
             "template": {
                 "outputs": [
                     {
                         "simpleText": {
-                            
-                            "text": "검색된 장학금은 총 : {}개 입니다".format(len(df))
+                            "text": '잘못입력하셨습니다'
                         }
-                    },
-                    {
-                    "carousel": {
-                    "type": "basicCard",
-                    "items": [
-                        {
-                        "title": name[0],
-                        "description": "장학금 추천",
-                        "thumbnail": {
-                            "imageUrl": "https://github.com/seungukkim/flower75982/blob/main/image/%EC%9E%A5%ED%95%99%EA%B8%881.jpg?raw=true"
-                        },
-                        "buttons": [
-                            {
-                            "action":"webLink",
-                            "label": "구경하기",
-                            "webLinkUrl": URL[0]
-                            },
-                            {
-                            "action": "share",
-                            "label": "공유하기"
-                        
-                            }
-                        
-                        ]
-                    
-
-                        },
-
-                        {
-                        "title": name[1],
-                        "description": "장학금 추천",
-                        "thumbnail": {
-                            "imageUrl": "https://github.com/seungukkim/flower75982/blob/main/image/%EC%9E%A5%ED%95%99%EA%B8%882.jpg?raw=true"
-                        },
-                        "buttons": [
-                            {
-                            "action":  "webLink",
-                            "label": "구경하기",
-                            "webLinkUrl": URL[1]
-                            },
-
-                            {
-                            "action": "share",
-                            "label": "공유하기"                      
-                            }
-                        
-                        ]
-                        },
-                        {
-                        "title": name[2],
-                        "description": "장학금 추천",
-                        "thumbnail": {
-                            "imageUrl": "https://github.com/seungukkim/flower75982/blob/main/image/%EC%9E%A5%ED%95%99%EA%B8%883.jpg?raw=true"
-                        },
-                        "buttons": [
-                            {
-                            "action": "webLink",
-                            "label": "구경하기",
-                            "webLinkUrl": URL[2]
-                            },
-                            {
-                            "action": "share",
-                            "label": "공유하기"
-                            }
-                       
-                        ]
-                        },
-                        {
-                        "title": name[3],
-                        "description": "장학금 추천",
-                        "thumbnail": {
-                            "imageUrl": "https://github.com/seungukkim/flower75982/blob/main/image/%EC%9E%A5%ED%95%99%EA%B8%884.jpg?raw=true"
-                        },
-                        "buttons": [
-                            {
-                            "action":  "webLink",
-                            "label": "구경하기",
-                            "webLinkUrl": URL[3]
-                            },
-
-                            {
-                            "action": "share",
-                            "label": "공유하기"                      
-                            }
-                        
-                        ]
-                        },
-                        {
-                        "title": name[4],
-                        "description": "장학금 추천",
-                        "thumbnail": {
-                            "imageUrl": "https://github.com/seungukkim/flower75982/blob/main/image/%EC%9E%A5%ED%95%99%EA%B8%885.jpg?raw=true"
-                        },
-                        "buttons": [
-                            {
-                            "action":  "webLink",
-                            "label": "구경하기",
-                            "webLinkUrl": URL[4]
-                            },
-
-                            {
-                            "action": "share",
-                            "label": "공유하기"                      
-                            }
-                        
-                        ]
-                        }
-                    ]
                     }
-                }
-                ],
-                "quickReplies": [
-                {
-                "messageText": "추가 장학금",
-                "action": "message",
-                "label": "장학금 더보기"
-                }
-            
                 ]
             }
         }
-
-        return responseBody
-    else :
-        qwest=False
-        responseBody = {
-            "version": "2.0",
-            "template": {
-                "outputs": [
-                    {
-                        "simpleText": {
+    
+    else:
+        if len(df) >= 5:
+            responseBody = {
+                "version": "2.0",
+                "template": {
+                    "outputs": [
+                        {
+                            "simpleText": {
+                                
+                                "text": "검색된 장학금은 총 : {}개 입니다".format(len(df))
+                            }
+                        },
+                        {
+                        "carousel": {
+                        "type": "basicCard",
+                        "items": [
+                            {
+                            "title": name[0],
+                            "description": "장학금 추천",
+                            "thumbnail": {
+                                "imageUrl": "https://github.com/seungukkim/flower75982/blob/main/image/%EC%9E%A5%ED%95%99%EA%B8%881.jpg?raw=true"
+                            },
+                            "buttons": [
+                                {
+                                "action":"webLink",
+                                "label": "구경하기",
+                                "webLinkUrl": URL[0]
+                                },
+                                {
+                                "action": "share",
+                                "label": "공유하기"
                             
-                            "text": "검색된 장학금은 총 : {}개 입니다".format(len(df))
-                        }
-                    },
-                    
-                    {
-                    "carousel": {
-                    "type": "basicCard",
-                    "items": [
-                        {
-                        "title": name[0],
-                        "description": "장학금 추천",
-                        "thumbnail": {
-                            "imageUrl": "https://github.com/seungukkim/flower75982/blob/main/image/%EC%9E%A5%ED%95%99%EA%B8%881.jpg?raw=true"
-                        },
-                        "buttons": [
-                            {
-                            "action":"webLink",
-                            "label": "구경하기",
-                            "webLinkUrl": URL[0]
-                            },
-                            {
-                            "action": "share",
-                            "label": "공유하기"
-                        
-                            }
-                        
-                        ]
-                        
-
-                        },
+                                }
                             
-                        {
-                        "title": name[1],
-                        "description": "장학금 추천",
-                        "thumbnail": {
-                            "imageUrl": "https://github.com/seungukkim/flower75982/blob/main/image/%EC%9E%A5%ED%95%99%EA%B8%882.jpg?raw=true"
-                        },
-                        "buttons": [
-                            {
-                            "action":  "webLink",
-                            "label": "구경하기",
-                            "webLinkUrl": URL[1]
+                            ]
+                        
+
                             },
 
                             {
-                            "action": "share",
-                            "label": "공유하기"                      
-                            }
-                        
-                        ]
-                        },
-                        {
-                        "title": name[2],
-                        "description": "장학금 추천",
-                        "thumbnail": {
-                            "imageUrl": "https://github.com/seungukkim/flower75982/blob/main/image/%EC%9E%A5%ED%95%99%EA%B8%883.jpg?raw=true"
-                        },
-                        "buttons": [
-                            {
-                            "action": "webLink",
-                            "label": "구경하기",
-                            "webLinkUrl": URL[2]
+                            "title": name[1],
+                            "description": "장학금 추천",
+                            "thumbnail": {
+                                "imageUrl": "https://github.com/seungukkim/flower75982/blob/main/image/%EC%9E%A5%ED%95%99%EA%B8%882.jpg?raw=true"
                             },
-                            {
-                            "action": "share",
-                            "label": "공유하기"
-                            }
-                       
-                        ]
-                        },
-                        {
-                        "title": name[3],
-                        "description": "장학금 추천",
-                        "thumbnail": {
-                            "imageUrl": "https://github.com/seungukkim/flower75982/blob/main/image/%EC%9E%A5%ED%95%99%EA%B8%884.jpg?raw=true"
-                        },
-                        "buttons": [
-                            {
-                            "action":  "webLink",
-                            "label": "구경하기",
-                            "webLinkUrl": URL[3]
-                            },
+                            "buttons": [
+                                {
+                                "action":  "webLink",
+                                "label": "구경하기",
+                                "webLinkUrl": URL[1]
+                                },
 
-                            {
-                            "action": "share",
-                            "label": "공유하기"                      
-                            }
-                        
-                        ]
-                        },
-                        {
-                        "title": name[4],
-                        "description": "장학금 추천",
-                        "thumbnail": {
-                            "imageUrl": "https://github.com/seungukkim/flower75982/blob/main/image/%EC%9E%A5%ED%95%99%EA%B8%885.jpg?raw=true"
-                        },
-                        "buttons": [
-                            {
-                            "action":  "webLink",
-                            "label": "구경하기",
-                            "webLinkUrl": URL[4]
+                                {
+                                "action": "share",
+                                "label": "공유하기"                      
+                                }
+                            
+                            ]
                             },
-
                             {
-                            "action": "share",
-                            "label": "공유하기"                      
-                            }
+                            "title": name[2],
+                            "description": "장학금 추천",
+                            "thumbnail": {
+                                "imageUrl": "https://github.com/seungukkim/flower75982/blob/main/image/%EC%9E%A5%ED%95%99%EA%B8%883.jpg?raw=true"
+                            },
+                            "buttons": [
+                                {
+                                "action": "webLink",
+                                "label": "구경하기",
+                                "webLinkUrl": URL[2]
+                                },
+                                {
+                                "action": "share",
+                                "label": "공유하기"
+                                }
                         
+                            ]
+                            },
+                            {
+                            "title": name[3],
+                            "description": "장학금 추천",
+                            "thumbnail": {
+                                "imageUrl": "https://github.com/seungukkim/flower75982/blob/main/image/%EC%9E%A5%ED%95%99%EA%B8%884.jpg?raw=true"
+                            },
+                            "buttons": [
+                                {
+                                "action":  "webLink",
+                                "label": "구경하기",
+                                "webLinkUrl": URL[3]
+                                },
+
+                                {
+                                "action": "share",
+                                "label": "공유하기"                      
+                                }
+                            
+                            ]
+                            },
+                            {
+                            "title": name[4],
+                            "description": "장학금 추천",
+                            "thumbnail": {
+                                "imageUrl": "https://github.com/seungukkim/flower75982/blob/main/image/%EC%9E%A5%ED%95%99%EA%B8%885.jpg?raw=true"
+                            },
+                            "buttons": [
+                                {
+                                "action":  "webLink",
+                                "label": "구경하기",
+                                "webLinkUrl": URL[4]
+                                },
+
+                                {
+                                "action": "share",
+                                "label": "공유하기"                      
+                                }
+                            
+                            ]
+                            }
                         ]
                         }
+                    }
+                    ],
+                    "quickReplies": [
+                    {
+                    "messageText": "추가 장학금",
+                    "action": "message",
+                    "label": "장학금 더보기"
+                    }
+                
                     ]
+                }
+            }
+
+        elif(len(df)) == 1 :
+            responseBody = {
+                "version": "2.0",
+                "template": {
+                    "outputs": [
+                        {
+                            "simpleText": {
+                                
+                                "text": "검색된 장학금은 총 : {}개 입니다".format(len(df))
+                            }
+                        },
+                        
+                        {
+                        "carousel": {
+                        "type": "basicCard",
+                        "items": [
+                            {
+                            "title": name[0],
+                            "description": "장학금 추천",
+                            "thumbnail": {
+                                "imageUrl": "https://github.com/seungukkim/flower75982/blob/main/image/%EC%9E%A5%ED%95%99%EA%B8%881.jpg?raw=true"
+                            },
+                            "buttons": [
+                                {
+                                "action":"webLink",
+                                "label": "구경하기",
+                                "webLinkUrl": URL[0]
+                                },
+                                {
+                                "action": "share",
+                                "label": "공유하기"
+                            
+                                }
+                            
+                            ]                       
+                            }
+                            
+                        ]
+                        }
+                    }
+                    ]
+                }
+            }
+        elif(len(df)) == 2 :
+            responseBody = {
+                "version": "2.0",
+                "template": {
+                    "outputs": [
+                        {
+                            "simpleText": {
+                                
+                                "text": "검색된 장학금은 총 : {}개 입니다".format(len(df))
+                            }
+                        },
+                        
+                        {
+                        "carousel": {
+                        "type": "basicCard",
+                        "items": [
+                            {
+                            "title": name[0],
+                            "description": "장학금 추천",
+                            "thumbnail": {
+                                "imageUrl": "https://github.com/seungukkim/flower75982/blob/main/image/%EC%9E%A5%ED%95%99%EA%B8%881.jpg?raw=true"
+                            },
+                            "buttons": [
+                                {
+                                "action":"webLink",
+                                "label": "구경하기",
+                                "webLinkUrl": URL[0]
+                                },
+                                {
+                                "action": "share",
+                                "label": "공유하기"
+                            
+                                }
+                            
+                            ]                       
+                            },
+                            {
+                            "title": name[1],
+                            "description": "장학금 추천",
+                            "thumbnail": {
+                                "imageUrl": "https://github.com/seungukkim/flower75982/blob/main/image/%EC%9E%A5%ED%95%99%EA%B8%882.jpg?raw=true"
+                            },
+                            "buttons": [
+                                {
+                                "action":  "webLink",
+                                "label": "구경하기",
+                                "webLinkUrl": URL[1]
+                                },
+
+                                {
+                                "action": "share",
+                                "label": "공유하기"                      
+                                }
+                            
+                            ]
+                            }
+                        ]
+                        }
+                    }
+                    ]
+                }
+            }
+        elif(len(df)) == 3 :
+            responseBody = {
+                "version": "2.0",
+                "template": {
+                    "outputs": [
+                        {
+                            "simpleText": {
+                                
+                                "text": "검색된 장학금은 총 : {}개 입니다".format(len(df))
+                            }
+                        },
+                        
+                        {
+                        "carousel": {
+                        "type": "basicCard",
+                        "items": [
+                            {
+                            "title": name[0],
+                            "description": "장학금 추천",
+                            "thumbnail": {
+                                "imageUrl": "https://github.com/seungukkim/flower75982/blob/main/image/%EC%9E%A5%ED%95%99%EA%B8%881.jpg?raw=true"
+                            },
+                            "buttons": [
+                                {
+                                "action":"webLink",
+                                "label": "구경하기",
+                                "webLinkUrl": URL[0]
+                                },
+                                {
+                                "action": "share",
+                                "label": "공유하기"
+                            
+                                }
+                            
+                            ]                       
+                            },
+                            {
+                            "title": name[1],
+                            "description": "장학금 추천",
+                            "thumbnail": {
+                                "imageUrl": "https://github.com/seungukkim/flower75982/blob/main/image/%EC%9E%A5%ED%95%99%EA%B8%882.jpg?raw=true"
+                            },
+                            "buttons": [
+                                {
+                                "action":  "webLink",
+                                "label": "구경하기",
+                                "webLinkUrl": URL[1]
+                                },
+
+                                {
+                                "action": "share",
+                                "label": "공유하기"                      
+                                }
+                            
+                            ]
+                            },
+                            {
+                            "title": name[2],
+                            "description": "장학금 추천",
+                            "thumbnail": {
+                                "imageUrl": "https://github.com/seungukkim/flower75982/blob/main/image/%EC%9E%A5%ED%95%99%EA%B8%882.jpg?raw=true"
+                            },
+                            "buttons": [
+                                {
+                                "action":  "webLink",
+                                "label": "구경하기",
+                                "webLinkUrl": URL[2]
+                                },
+
+                                {
+                                "action": "share",
+                                "label": "공유하기"                      
+                                }
+                            
+                            ]
+                            }
+                        ]
+                        }
+                    }
+                    ]
+                }
+            }
+        else:
+            responseBody = {
+                "version": "2.0",
+                "template": {
+                    "outputs": [
+                        {
+                            "simpleText": {
+                                
+                                "text": "검색된 장학금은 총 : {}개 입니다".format(len(df))
+                            }
+                        },
+                        {
+                        "carousel": {
+                        "type": "basicCard",
+                        "items": [
+                            {
+                            "title": name[0],
+                            "description": "장학금 추천",
+                            "thumbnail": {
+                                "imageUrl": "https://github.com/seungukkim/flower75982/blob/main/image/%EC%9E%A5%ED%95%99%EA%B8%881.jpg?raw=true"
+                            },
+                            "buttons": [
+                                {
+                                "action":"webLink",
+                                "label": "구경하기",
+                                "webLinkUrl": URL[0]
+                                },
+                                {
+                                "action": "share",
+                                "label": "공유하기"
+                            
+                                }
+                            ]                       
+                            },
+                            {
+                            "title": name[1],
+                            "description": "장학금 추천",
+                            "thumbnail": {
+                                "imageUrl": "https://github.com/seungukkim/flower75982/blob/main/image/%EC%9E%A5%ED%95%99%EA%B8%882.jpg?raw=true"
+                            },
+                            "buttons": [
+                                {
+                                "action":  "webLink",
+                                "label": "구경하기",
+                                "webLinkUrl": URL[1]
+                                },
+
+                                {
+                                "action": "share",
+                                "label": "공유하기"                      
+                                }
+                            
+                            ]
+                            },
+                            {
+                            "title": name[2],
+                            "description": "장학금 추천",
+                            "thumbnail": {
+                                "imageUrl": "https://github.com/seungukkim/flower75982/blob/main/image/%EC%9E%A5%ED%95%99%EA%B8%882.jpg?raw=true"
+                            },
+                            "buttons": [
+                                {
+                                "action":  "webLink",
+                                "label": "구경하기",
+                                "webLinkUrl": URL[2]
+                                },
+
+                                {
+                                "action": "share",
+                                "label": "공유하기"                      
+                                }
+                            
+                            ]
+                            },
+                            {
+                            "title": name[3],
+                            "description": "장학금 추천",
+                            "thumbnail": {
+                                "imageUrl": "https://github.com/seungukkim/flower75982/blob/main/image/%EC%9E%A5%ED%95%99%EA%B8%882.jpg?raw=true"
+                            },
+                            "buttons": [
+                                {
+                                "action":  "webLink",
+                                "label": "구경하기",
+                                "webLinkUrl": URL[3]
+                                },
+
+                                {
+                                "action": "share",
+                                "label": "공유하기"                      
+                                }
+                            ]
+                            }
+                        ]
                     }
                 }
-                ]
-            }
+            ]
         }
-
-        return responseBody
+    }
+        
+    return responseBody
 
 @app.route('/api/recommen2d', methods=['POST'])
 def recommen2d():
