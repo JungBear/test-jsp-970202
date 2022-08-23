@@ -321,7 +321,7 @@ def recommend():
         return responseBody
 
 @app.route('/api/recommen2d', methods=['POST'])
-def recommend():
+def recommen2d():
     body = request.get_json()
     print(body)
     
