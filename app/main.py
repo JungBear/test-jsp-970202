@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello_world():
-    return 'Hello, World!!!!'
+    return '11'
 
 # 카카오톡 텍스트형 응답
 @app.route('/api/sayHello', methods=['POST'])
@@ -59,7 +59,7 @@ def recommend():
     print(df)
     name=df['name']
     URL=df['url']
-    if len(df) >= 5:
+    if len(df) > 5:
         responseBody = {
             "version": "2.0",
             "template": {
@@ -67,7 +67,7 @@ def recommend():
                     {
                         "simpleText": {
                             
-                            "text": "검색된 장학금은 총 : {}개 입니다".format(len1)
+                            "text": "검색된 장학금은 총 : {}개 입니다".format(len(df))
                         }
                     },
                     {
