@@ -40,41 +40,71 @@ def recommend():
         body = request.get_json()
         print(body)
         
+        # 1차적으로 모든 발화를 한곳에 딕셔너리형태로 수집
         params_df=body['action']['params']
-        print(params_df)
-        
-        job=params_df['job']
-        print(job)
-        print(type(job))
-        location=params_df['loc']
-        print(location)
-        Benefits=params_df['Benefits']
-        age=json.loads(params_df['sys_number'])['amount']
-        yes_no = params_df['yes_no']
+        # {'yes_no': '해당없음', 'job': '고등학생', 'loc': '서울', 'Benefits': '학비지원', 'sys_number': '{"amount": 10, "unit": null}'}
 
+        # 본격적으로 발화별 분류
+        job=params_df['job'] 
+        # 직업(type = str)
+
+        location=params_df['loc']
+        # 지역(type = str)
+
+        Benefits=params_df['Benefits']
+        # 장학혜택(type = str)
+        age=json.loads(params_df['sys_number'])['amount']
+        # 나이(type = str) -> 숫자형을 원하면 int()를 해준다
+
+        yes_no = params_df['yes_no']
+        # 특수계층(type = str)
+
+        # SQL에서의 해당글자가 포함된 행 출력 문법을 맞추기위해 앞뒤로 %를 붙혀준다.
         Benefits1="\'%%" + Benefits + "%%\'"
         job1="\'%%" + job + "%%\'"
         yes_no1 = "\'%%" + yes_no + "%%\'"
         location1 = "\'%%" + location + "%%\'"
         df=start.db_select(Benefits1,job1,age,location1,yes_no1)
-        print(df)
+        # name과 url의 컬럼을 가진 데이터프레임 만들기
+
         name=df['name']
+        # 데이터프레임의 name컬럼을 시리즈형식으로 저장
+        
         URL=df['url']
+        # 데이터프레임의 url컬럼을 시리즈형식으로 저장
     except:
+    # 혹시 잘못입력했는데 끝까지 진행했을 경우 출력
         responseBody = {
             "version": "2.0",
             "template": {
                 "outputs": [
                     {
-                        "simpleText": {
-                            "text": '잘못입력하셨습니다'
-                        }
+                        "basicCard": {
+                            "title": '잘못입력하셨습니다',
+                            "buttons": [
+                                {
+                                    "action": "block",
+                                    "label": "처음으로",
+                                    "blockId": "62fae42870055f434dcd241b"
+                                },
+                                {
+                                    "action": "block",
+                                    "label": "다시하기",
+                                    "blockId": "63045f97bda32f3914d2fc41"
+                                }
+                            ]  
+                        },
                     }
                 ]
             }
         }
     
     else:
+    # 오류가 안났을 경우 리스트 출력
+    # df라는 데이터프레임의 인덱스 갯수에 맞는 리스트갯수를 출력해주기위해
+    # 갯수를 새주는 len()사용
+    # 인덱스가 1개일때 베이직카드 1개 출력, 인덱스가 2개일때 베이직카드 2개 출력...
+    # 5개 이상이면 리스트출력
         if len(df) >= 5:
             responseBody = {
                 "version": "2.0",
@@ -394,7 +424,7 @@ def recommend():
                     ]
                 }
             }
-        else:
+        elif (len(df)) == 4:
             responseBody = {
                 "version": "2.0",
                 "template": {

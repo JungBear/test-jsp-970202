@@ -30,6 +30,7 @@ def db_create():
 def db_select(choice,choice1,choice2,choice3,choice4):
     conn = psycopg2.connect(host="ec2-44-205-64-253.compute-1.amazonaws.com", dbname="dbetp492o6t007", user="xujbfrkgcodope", password="1db04c81566fec459257b5dbbd14b19d10931f94e3f5f0459af29789c3b52c66")
     # heroku에 배포되어 있는 데이터베이스에 접속하기
+    
     cur = conn.cursor()
     # choice="\'%%생활비지원%%'"
     # choice1="\'%%대학생%%'"
@@ -38,10 +39,10 @@ def db_select(choice,choice1,choice2,choice3,choice4):
     # choice4="\'%%기초수급자%%'"
     cur.execute("SELECT name,url FROM dreamspon WHERE advantage LIKE {0} AND who like {1} AND (age IS null OR age < {2}) AND (where1 IS null or where1 LIKE {3}) AND (qualification IS null or qualification LIKE {4})".format(choice,choice1,choice2,choice3,choice4))
     rows = cur.fetchall() 
-    # 데이터내용 전부 불러서 rows에 입력
     # list 타입
+    # 데이터내용 전부 불러서 rows에 입력
+    
     df = pd.DataFrame(rows, columns = ['name','url'])
-    #print(df)
     # DataFrame으로 만들어주기
     # 컬럼명을 지정
     return df
